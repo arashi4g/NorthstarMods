@@ -25,17 +25,20 @@ void function CServerGameDLL_OnReceivedSayTextMessageCallback()
 	localMessage.player = GetPlayerByIndex(NSChatGetCurrentPlayer())
 	localMessage.channelId = NSChatGetCurrentChannel()
 	localMessage.shouldBlock = false
+	
+	if (localMessage.player == null)
+	return
 
+	
 	foreach ( callbackFunc in NsCustomCallbacks.OnReceivedSayTextMessageCallbacks )
 	{
 		ClServer_MessageStruct returnStruct = callbackFunc(localMessage)
 		localMessage.message = returnStruct.message
-		localMessage.player = returnStruct.player
 		localMessage.channelId = returnStruct.channelId
 		localMessage.shouldBlock = localMessage.shouldBlock || returnStruct.shouldBlock
 	}
 
-	NSSetMessage(localMessage.message, localMessage.player.GetPlayerIndex(), localMessage.channelId, localMessage.shouldBlock)
+	NSSetMessage(localMessage.message, localMessage.channelId, localMessage.shouldBlock)
 }
 
 void function AddCallback_OnReceivedSayTextMessage( ClServer_MessageStruct functionref (ClServer_MessageStruct) callbackFunc )
